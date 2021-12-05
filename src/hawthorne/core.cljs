@@ -8,24 +8,33 @@
   (swap! disposables conj disposable))
 
 ;; TODO: Complete this function
-(defn dispose-disposables! [])
+(defn dispose-all! 
+  [disposables]
+  (run! (fn [^js disposable]
+          (.. disposable (dispose)))
+        disposables))
 
 (defn say-hello []
   (.. window (showInformationMessage "Hello world!")))
 
+(defn register-command!
+  [command-name command-function]
+  (let [disposable (.. vscode -commands (registerCommand
+                                         command-name
+                                         command-function))]
+    (add-disposable! disposable)))
+
 (defn activate
   [^js context]
   (reset! current-context context)
-  (js/console.log "Hawthorne activating")
-  ;; TODO: Add this to disposables atom
-  (.. context -subscriptions
-      (push (.. vscode -commands
-                (registerCommand "hawthorne.sayHello" say-hello)))))
+  (prn "Hawthorne activating")
+  (register-command! "hawthorne.sayHello" say-hello))
 
-;; TODO: Call dispose-disposables!
 (defn deactivate
   []
-  (js/console.log "Hawthorne deactivating"))
+  (prn "Hawhthorne deactivating")
+  (dispose-all! @disposables)
+  (prn "Hawthorne deactivated"))
 
 (defn before-load-async [done]
   (prn "running before-load")
@@ -35,4 +44,4 @@
 (defn after-load []
   (prn "running after-load")
   (activate @current-context)
-  (println "Reloaded"))
+  (println "Hawthorne reloaded"))
