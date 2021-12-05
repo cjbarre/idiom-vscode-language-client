@@ -1,6 +1,6 @@
-# hawthorne README
+# Hawthorne
 
-This is the README for your extension "hawthorne". After writing up a brief description, we recommend including the following sections.
+A Clojure(Script) development environment.
 
 ## Features
 
