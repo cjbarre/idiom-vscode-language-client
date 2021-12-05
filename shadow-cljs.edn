@@ -16,5 +16,5 @@
              :deactivate hawthorne.core/deactivate}
    :output-dir "lib/js"
    :output-to "lib/main.js"
-   #_#_:devtools {:before-load-async hawthorne.core/before
-              :after-load hawthorne.core/after}}}}
+   :devtools {:before-load-async hawthorne.core/before-load-async
+              :after-load hawthorne.core/after-load}}}}
