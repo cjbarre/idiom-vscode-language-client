@@ -7,7 +7,6 @@
 (defn add-disposable! [disposable]
   (swap! disposables conj disposable))
 
-;; TODO: Complete this function
 (defn dispose-all! 
   [disposables]
   (run! (fn [^js disposable]
@@ -27,21 +26,19 @@
 (defn activate
   [^js context]
   (reset! current-context context)
-  (prn "Hawthorne activating")
-  (register-command! "hawthorne.sayHello" say-hello))
+  (register-command! "hawthorne.sayHello" say-hello)
+  (prn "Hawthorne activated"))
 
 (defn deactivate
   []
-  (prn "Hawhthorne deactivating")
   (dispose-all! @disposables)
   (prn "Hawthorne deactivated"))
 
 (defn before-load-async [done]
-  (prn "running before-load")
   (deactivate)
   (done))
 
 (defn after-load []
-  (prn "running after-load")
   (activate @current-context)
-  (println "Hawthorne reloaded"))
+  (prn "Hawthorne reloaded"))
+  
