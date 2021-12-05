@@ -4,6 +4,10 @@
   "description": "A Clojure(Script) development environment.",
 	"publisher": "bpringe",
   "version": "0.0.1",
+  "scripts": {
+    "watch": "npx shadow-cljs watch extension",
+    "cljs-repl": "npx shadow-cljs cljs-repl extension"
+  },
   "engines": {
     "vscode": "^1.62.0"
   },
