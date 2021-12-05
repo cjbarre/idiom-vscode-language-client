@@ -1,3 +1,9 @@
 node_modules
 .vscode-test/
 *.vsix
+.lsp/.cache
+.shadow-cljs
+.lsp/.cache
+.clj-kondo/.cache
+lib
+.calva/output-window

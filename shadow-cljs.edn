@@ -1,0 +1,20 @@
+;; shadow-cljs configuration
+{:source-paths ["src"]
+
+ :dependencies []
+
+ :builds
+ {:extension
+  {:target :node-library
+   :js-options {:js-provider :shadow
+                ;; TODO: Test if this is necessary
+                :keep-native-requires true
+                ;; TODO: Test if this is necessary
+                :keep-as-require #{"vscode"}}
+   :compiler-options {:infer-externs :auto}
+   :exports {:activate hawthorne.core/activate
+             :deactivate hawthorne.core/deactivate}
+   :output-dir "lib/js"
+   :output-to "lib/main.js"
+   #_#_:devtools {:before-load-async hawthorne.core/before
+              :after-load hawthorne.core/after}}}}
