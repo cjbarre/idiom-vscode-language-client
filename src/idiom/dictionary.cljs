@@ -28,27 +28,30 @@ fs
 (defn lookup-word [dictionary text]
   (loop [text (string/lower-case text)
          drop-num 0]
-    #_(prn text)
-    (let [term-seq (-> text
-                       (string/split #"\s"))
+    (let [term-seq (->> (-> text
+                            (string/split #"\s"))
+                        (drop-last drop-num))
           proposed-term (if (= 1 (count term-seq))
-                          text
+                          (-> (first term-seq)
+                              (string/replace #"ts" "tsh")
+                              (string/replace #"tz" "ts"))
                           (-> (->> term-seq
-                                   (drop-last drop-num)
                                    (string/join " ")
                                    (string/lower-case))
                               (string/replace #"ts" "tsh")
                               (string/replace #"tz" "ts")))]
-      (prn proposed-term)
+      #_(prn term-seq)
+      #_(prn proposed-term)
       (if (string/blank? proposed-term)
         nil
-        (if (get dictionary proposed-term)
-          (-> proposed-term
-              #_(string/replace #"ts" "tz")
-              #_(string/replace #"tsh" "ts"))
-          (recur
-           text
-           (inc drop-num)))))))
+        (let [result (get dictionary proposed-term)]
+          #_(prn result)
+          (cond
+            (and (not result) (<= (count term-seq) 1)) nil
+            (not result) (recur
+                          text
+                          (inc drop-num))
+            :else proposed-term))))))
 
 (defn lookup-words 
   [dictionary text]
