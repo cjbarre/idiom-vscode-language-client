@@ -65,7 +65,7 @@ fs
   [dictionary text]
   (let [sections (->> (-> text
                           (string/replace #"\n|\r\n" " ")
-                          (string/replace #"\^" "")
+                          (string/replace #"\^|\#" "")
                           (string/split  #"\,"))
                       (filter #(not (string/blank? %))))]
     (map #(lookup-words dictionary %) sections)))
