@@ -1,7 +1,7 @@
 ;; shadow-cljs configuration
 {:source-paths ["src"]
 
- :dependencies []
+ :dependencies [[funcool/promesa "8.0.450"]]
 
  :builds
  {:extension
@@ -12,9 +12,9 @@
                 ;; TODO: Test if this is necessary
                 :keep-as-require #{"vscode"}}
    :compiler-options {:infer-externs :auto}
-   :exports {:activate hawthorne.core/activate
-             :deactivate hawthorne.core/deactivate}
+   :exports {:activate idiom.core/activate
+             :deactivate idiom.core/deactivate}
    :output-dir "lib/js"
    :output-to "lib/main.js"
-   :devtools {:before-load-async hawthorne.core/before-load-async
-              :after-load hawthorne.core/after-load}}}}
+   :devtools {:before-load-async idiom.core/before-load-async
+              :after-load idiom.core/after-load}}}}

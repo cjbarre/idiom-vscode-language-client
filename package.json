@@ -1,8 +1,8 @@
 {
-  "name": "hawthorne",
-  "displayName": "Hawthorne",
-  "description": "A Clojure(Script) development environment.",
-	"publisher": "bpringe",
+  "name": "idiom",
+  "displayName": "Idiom",
+  "description": "A VSCode extension for translating the Tibetan language to English",
+  "publisher": "cjbarre",
   "version": "0.0.1",
   "scripts": {
     "watch": "npx shadow-cljs watch extension",
@@ -12,25 +12,19 @@
     "vscode": "^1.62.0"
   },
   "categories": [
-    "Programming Languages"
+    "Other"
   ],
   "activationEvents": [
-		"onLanguage:clojure",
-		"workspaceContains:**/project.clj",
-		"workspaceContains:**/shadow-cljs.edn",
-		"workspaceContains:**/deps.edn"
+    "onLanguage:idiom-fmt"
   ],
   "main": "./lib/main.js",
   "contributes": {
-		"commands": [
-			{
-				"command": "hawthorne.sayHello",
-				"category": "Hawthorne",
-				"title": "Say Hello"
-			}
-		]
-	},
+    "commands": []
+  },
   "devDependencies": {
     "shadow-cljs": "^2.16.6"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.0.1"
   }
 }
