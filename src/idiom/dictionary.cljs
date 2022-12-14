@@ -46,13 +46,13 @@ fs
                         (drop-last drop-num))
           proposed-term (if (= 1 (count term-seq))
                           (-> (first term-seq)
-                              (string/replace #"ts" "tsh")
-                              (string/replace #"tz" "ts"))
+                              #_(string/replace #"ts" "tsh")
+                              #_(string/replace #"tz" "ts"))
                           (-> (->> term-seq
                                    (string/join " ")
                                    (string/lower-case))
-                              (string/replace #"ts" "tsh")
-                              (string/replace #"tz" "ts")))]
+                              #_(string/replace #"ts" "tsh")
+                              #_(string/replace #"tz" "ts")))]
       #_(prn term-seq)
       #_(prn proposed-term)
       (if (string/blank? proposed-term)
