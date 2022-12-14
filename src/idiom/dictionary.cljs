@@ -33,7 +33,9 @@ fs
 
 (defn handle-special-cases
   [word]
-  (clojure.string/replace word #"pa'i" "pa"))
+  (-> word
+      (clojure.string/replace #"pa'i" "pa")
+      (clojure.string/replace #"ba'i" "ba")))
 
 (defn lookup-word [dictionary text]
   (loop [text (->> (string/lower-case text)
