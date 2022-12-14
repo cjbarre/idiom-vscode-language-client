@@ -1,7 +1,59 @@
 (ns idiom.core
-  (:require ["vscode" :as vscode :refer [window languages Hover editor Range]]
-            [idiom.dictionary :refer [lookup-words dictionary load-dictionary lookup-sections]]
-            [clojure.string :as string]))
+  (:require ["vscode" :as vscode :refer 
+             [window 
+              languages 
+              Hover editor 
+              Range 
+              workspace 
+              Uri 
+              Position]]
+            [idiom.dictionary :refer 
+             [lookup-words 
+              dictionary 
+              load-dictionary 
+              lookup-sections 
+              lookup-definitions]]
+            [promesa.core :as p]
+            [clojure.string :as string]
+            [clojure.pprint :refer 
+             [pprint]]
+            ["fs" :as fs]
+            ["tibetan-ewts-converter" :as ewts :refer [EwtsConverter]]))
+
+(def converter (EwtsConverter.))
+
+(.to_unicode converter "cigs")
+
+(defn format-definitions
+  [dictionary-results]
+  (map
+   (fn [x]
+     (str
+      (-> x first key)
+      "\n"
+      (string/join "\n"
+                   (map
+                    (fn [definition]
+                      (str "- " definition))
+                    (-> x first val)))))
+   dictionary-results))
+
+(defn eval-selection []
+  (let [editor (.-activeTextEditor window)
+        selection-range (Range. (.. editor -selection -start)
+                                (.. editor -selection -end))
+        selected-text (.getText (.. editor -document) selection-range)
+        text-sections (lookup-sections @dictionary selected-text)
+        section-definitions (map #(string/join "\n\n"
+                                               (format-definitions (lookup-definitions @dictionary %)))
+                                 text-sections)
+        uri (.parse Uri (-> (.. workspace -workspaceFolders) first js->clj (get "uri") (str "/output.idiom-repl")))
+        display-text (str selected-text
+                          "\n\n"
+                          (string/join "\n\n----\n\n" section-definitions))]
+    (-> (.openTextDocument workspace uri)
+        (p/then #(.showTextDocument window % 1 true))
+        (p/then #(.edit % (fn [edit] (.insert edit (Position. 0 0) (str display-text "\n\n" "-----" "\n" "-----" "\n\n"))))))))
 
 (defonce current-context (atom nil))
 
@@ -16,8 +68,7 @@
           (.. disposable (dispose)))
         disposables))
 
-(defn say-hello []
-  (.. window (showInformationMessage "Hello world!")))
+
 
 (defn register-command!
   [command-name command-function]
@@ -30,6 +81,7 @@
   [^js context]
   (reset! current-context context)
   (load-dictionary "/Users/cam/Code/tibet/idiom/dictionary.edn")
+  (register-command! "idiom.evalSelection" eval-selection)
   (add-disposable! (.. vscode -languages
                        (registerHoverProvider
                         "idiom-fmt"
@@ -37,12 +89,19 @@
                                              (let [editor (.-activeTextEditor window)
                                                    selection-range (Range. (.. editor -selection -start)
                                                                            (.. editor -selection -end))
-                                                   selected-text (.getText document selection-range)]
+                                                   selected-text (.getText document selection-range)
+                                                   text-sections (lookup-sections @dictionary selected-text)
+                                                   section-definitions (map #(string/join "\n\n"
+                                                                                          (format-definitions (lookup-definitions @dictionary %)))
+                                                                            text-sections)
+                                                   uri (.parse Uri (-> (.. workspace -workspaceFolders) first js->clj (get "uri") (str "/output.idiom-repl")))
+                                                   display-text (str selected-text
+                                                                     "\n\n"
+                                                                     (string/join "\n\n----\n\n" section-definitions))]
+                                               
                                                (Hover. (str selected-text
                                                             "\n\n"
-                                                            (string/join
-                                                             "\n\n"
-                                                             (lookup-sections @dictionary selected-text))))))})))
+                                                            (string/join "\n\n----\n\n" section-definitions)))))})))
 
   (prn "Idiom activated"))
 

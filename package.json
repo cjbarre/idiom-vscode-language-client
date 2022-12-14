@@ -19,12 +19,20 @@
   ],
   "main": "./lib/main.js",
   "contributes": {
-    "commands": []
+    "commands": [
+      {
+        "command": "idiom.evalSelection",
+        "category": "Idiom",
+        "title": "Eval Selection"
+      }
+    ]
   },
   "devDependencies": {
     "shadow-cljs": "^2.16.6"
   },
   "dependencies": {
-    "vscode-languageclient": "^8.0.1"
+    "tibetan-ewts-converter": "^1.0.1",
+    "vscode-languageclient": "^8.0.1",
+    "xhr2": "^0.2.1"
   }
 }

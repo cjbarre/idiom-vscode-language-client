@@ -1,9 +1,15 @@
 (ns idiom.dictionary
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require ["fs" :as fs]
             [clojure.string :as string]
             [clojure.pprint :refer [pprint]]
             [clojure.reader :refer [read-string]]
-            ["vscode" :as vscode :refer [window languages]]))
+            ["vscode" :as vscode :refer [window languages]]
+            [cljs-http.client :as httpc]
+            [cljs.nodejs :as nodejs]
+            [cljs.core.async :refer [<! take!]]))
+
+#_(set! js/XMLHttpRequest (nodejs/require "xhr2"))
 
 ;; fs.readFile('/Users/joe/test.txt', 'utf8', (err, data) => {
 ;;   if (err) {
@@ -73,12 +79,28 @@ fs
                       (filter #(not (string/blank? %))))]
     (map #(lookup-words dictionary %) sections)))
 
-(def ex "MKHAR SIL GYI MTSON DON BKA' GDAMS GLEGS BAM LAS ZUR DU BKOL
-BA BZHUGS SO, ,NGA")
+(defn lookup-definitions
+  [dictionary words]
+  (map #(assoc {}
+               (string/upper-case (or % "Not Found"))
+               (map :definition (get-in dictionary [% :definitions])))
+       (filter #(not (nil? %)) words)))
+ 
+#_(pprint (lookup-definitions @dictionary [nil "bum" "pa'i" "sgra don" "chos can"]))
+
+#_(take! (lookup-definition dictionary "rang mtshang"))
+
+#_(http/post
+ "https://dictionary.christian-steinert.de/dict.php"
+ {:form-params {:search "pa"
+                :lang "tib"
+                :offset "0"}})
+
+#_(def ex "DUS RUNG GI SMAN DANG DUS RUNG MA YIN PA'I SMAN 'DRES MAR DUS MA YIN PAR SPYOD DGOS TSE KHYIM PA'I MIG SNGAR SPYOD PA DANG")
 
 #_(lookup-sections @dictionary ex)
 
-#_(lookup-word @dictionary "PA")
+#_(lookup-word @dictionary "spyod dgos")
 
 #_(get @dictionary (->> (-> ex
                           (string/split #"\s"))
@@ -86,3 +108,4 @@ BA BZHUGS SO, ,NGA")
                       (string/join " ")
                       (string/lower-case)))
 
+#_(get @dictionary "dang dus")
