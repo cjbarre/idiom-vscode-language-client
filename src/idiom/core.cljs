@@ -20,9 +20,13 @@
             ["fs" :as fs]
             ["tibetan-ewts-converter" :as ewts :refer [EwtsConverter]]))
 
-(def converter (EwtsConverter.))
+(defonce converter (EwtsConverter.))
 
-(.to_unicode converter "cigs")
+(comment
+  
+
+  (.to_unicode converter "cigs")
+  )
 
 (defn format-definitions
   [dictionary-results]
@@ -30,11 +34,12 @@
    (fn [x]
      (str
       (-> x first key)
-      "\n"
-      (string/join "\n"
+      " (" (.to_unicode converter (clojure.string/lower-case (-> x first key))) ")" 
+      "\n\n"
+      (string/join "\n\n"
                    (map
-                    (fn [definition]
-                      (str "- " definition))
+                    (fn [{:keys [source definition]}]
+                      (str source " \n" "- " definition))
                     (-> x first val)))))
    dictionary-results))
 

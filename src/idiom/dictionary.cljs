@@ -31,8 +31,13 @@ fs
 
 #_(load-dictionary "/Users/cam/Code/tibet/idiom/dictionary.edn")
 
+(defn handle-special-cases
+  [word]
+  (clojure.string/replace word #"pa'i" "pa"))
+
 (defn lookup-word [dictionary text]
-  (loop [text (string/lower-case text)
+  (loop [text (->> (string/lower-case text)
+                   (handle-special-cases))
          drop-num 0]
     (let [term-seq (->> (-> text
                             (string/split #"\s"))
@@ -83,10 +88,12 @@ fs
   [dictionary words]
   (map #(assoc {}
                (string/upper-case (or % "Not Found"))
-               (map :definition (get-in dictionary [% :definitions])))
+               (sort-by :priority (get-in dictionary [(handle-special-cases %) :definitions])))
        (filter #(not (nil? %)) words)))
  
 #_(pprint (lookup-definitions @dictionary [nil "bum" "pa'i" "sgra don" "chos can"]))
+
+
 
 #_(take! (lookup-definition dictionary "rang mtshang"))
 
@@ -109,3 +116,7 @@ fs
                       (string/lower-case)))
 
 #_(get @dictionary "dang dus")
+
+#_(clojure.pprint/pprint (lookup-definitions @dictionary ["rig pa'i"]))
+
+#_(lookup-sections @dictionary "RIG PA'I SGRON MA 'BAR BA NGAS BSTAN NAS")
