@@ -53,7 +53,7 @@
                                                (format-definitions (lookup-definitions @dictionary %)))
                                  text-sections)
         uri (.parse Uri (-> (.. workspace -workspaceFolders) first js->clj (get "uri") (str "/output.idiom-repl")))
-        display-text (str selected-text
+        display-text (str selected-text " (" (.to_unicode converter (clojure.string/lower-case selected-text)) ")"
                           "\n\n"
                           (string/join "\n\n----\n\n" section-definitions))]
     (-> (.openTextDocument workspace uri)
@@ -100,11 +100,11 @@
                                                                                           (format-definitions (lookup-definitions @dictionary %)))
                                                                             text-sections)
                                                    uri (.parse Uri (-> (.. workspace -workspaceFolders) first js->clj (get "uri") (str "/output.idiom-repl")))
-                                                   display-text (str selected-text
+                                                   display-text (str selected-text 
                                                                      "\n\n"
                                                                      (string/join "\n\n----\n\n" section-definitions))]
                                                
-                                               (Hover. (str selected-text
+                                               (Hover. (str selected-text " (" (.to_unicode converter (clojure.string/lower-case selected-text)) ")"
                                                             "\n\n"
                                                             (string/join "\n\n----\n\n" section-definitions)))))})))
 
